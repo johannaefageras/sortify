@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'GT Pressura';
+  src:
+    url('/fonts/GTPressura.woff2') format('woff2'),
+    url('/fonts/GTPressura.woff') format('woff'),
+    url('/fonts/GTPressura.ttf') format('truetype');
+  font-weight: 300 900;
+  font-stretch: 100% 150%;
+  font-style: normal italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Pressura Mono';
+  src:
+    url('/fonts/GTPressuraMono.woff2') format('woff2'),
+    url('/fonts/GTPressuraMono.woff') format('woff'),
+    url('/fonts/GTPressuraMono.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: normal italic;
+  font-display: swap;
+}
