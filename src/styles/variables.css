@@ -1,0 +1,136 @@
+/* ============================================
+   Sortify — Design Tokens
+   ============================================ */
+
+:root {
+  /* --- Neutrals --- */
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --black: #0a0a0a;
+
+  /* --- Accent (green) --- */
+  --accent: hsl(152, 56%, 40%);
+  --accent-hover: hsl(152, 56%, 32%);
+  --accent-active: hsl(152, 56%, 26%);
+  --accent-subtle: hsl(152, 40%, 95%);
+  --accent-muted: hsl(152, 30%, 85%);
+
+  /* --- Danger (for crisis/safety UI) --- */
+  --danger: hsl(0, 65%, 48%);
+  --danger-hover: hsl(0, 65%, 40%);
+  --danger-subtle: hsl(0, 50%, 95%);
+
+  /* --- Semantic colors --- */
+  --color-bg: var(--white);
+  --color-surface: var(--gray-50);
+  --color-surface-raised: var(--white);
+  --color-text: var(--gray-900);
+  --color-text-muted: var(--gray-500);
+  --color-text-faint: var(--gray-400);
+  --color-border: var(--gray-200);
+  --color-border-strong: var(--gray-300);
+  --color-interactive: var(--accent);
+  --color-interactive-hover: var(--accent-hover);
+  --color-interactive-active: var(--accent-active);
+  --color-focus-ring: hsla(152, 56%, 40%, 0.4);
+
+  /* --- Typography --- */
+  --font-body: 'CC Hero Sandwich Pro', system-ui, -apple-system, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+
+  --text-xs: 0.8125rem;   /* 13px */
+  --text-sm: 0.9375rem;   /* 15px */
+  --text-base: 1.0625rem; /* 17px */
+  --text-lg: 1.25rem;     /* 20px */
+  --text-xl: 1.5rem;      /* 24px */
+  --text-2xl: 1.875rem;   /* 30px */
+  --text-3xl: 2.5rem;     /* 40px */
+  --text-4xl: 3.25rem;    /* 52px */
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.45;
+  --leading-relaxed: 1.6;
+
+  --weight-light: 350;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 650;
+
+  /* --- Spacing scale --- */
+  --space-1: 0.25rem;    /* 4px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+
+  /* --- Border radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* --- Shadows (minimal) --- */
+  --shadow-sm: 0 1px 2px hsla(0, 0%, 0%, 0.05);
+  --shadow-md: 0 2px 8px hsla(0, 0%, 0%, 0.08);
+
+  /* --- Transitions --- */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+
+  /* --- Layout --- */
+  --content-width: 640px;
+  --page-width: 960px;
+  --page-padding: var(--space-6);
+}
+
+/* ============================================
+   Dark Theme
+   ============================================ */
+
+[data-theme='dark'] {
+  --color-bg: var(--gray-900);
+  --color-surface: var(--gray-800);
+  --color-surface-raised: var(--gray-800);
+  --color-text: var(--gray-100);
+  --color-text-muted: var(--gray-400);
+  --color-text-faint: var(--gray-500);
+  --color-border: var(--gray-700);
+  --color-border-strong: var(--gray-600);
+
+  --accent: hsl(152, 50%, 50%);
+  --accent-hover: hsl(152, 50%, 58%);
+  --accent-active: hsl(152, 50%, 64%);
+  --accent-subtle: hsla(152, 40%, 50%, 0.1);
+  --accent-muted: hsla(152, 30%, 50%, 0.2);
+
+  --danger: hsl(0, 60%, 58%);
+  --danger-hover: hsl(0, 60%, 65%);
+  --danger-subtle: hsla(0, 50%, 50%, 0.1);
+
+  --color-interactive: var(--accent);
+  --color-interactive-hover: var(--accent-hover);
+  --color-interactive-active: var(--accent-active);
+  --color-focus-ring: hsla(152, 50%, 50%, 0.35);
+
+  --shadow-sm: 0 1px 2px hsla(0, 0%, 0%, 0.2);
+  --shadow-md: 0 2px 8px hsla(0, 0%, 0%, 0.3);
+
+  --color-btn-primary-text: var(--gray-900);
+}
