@@ -15,9 +15,23 @@
 	import iconClipboard from '$lib/assets/icons/clipboard.svg';
 	import iconFlyingSaucer from '$lib/assets/icons/flying-saucer.svg';
 	import iconRobot from '$lib/assets/icons/robot.svg';
+	import iconOldWoman from '$lib/assets/icons/old-woman.svg';
+	import iconClassicalBuilding from '$lib/assets/icons/classical-building.svg';
+	import iconBrain from '$lib/assets/icons/brain.svg';
+	import iconMirror from '$lib/assets/icons/mirror.svg';
+	import iconFaceMelting from '$lib/assets/icons/face-melting.svg';
+	import iconMagnifyingGlass from '$lib/assets/icons/magnifying-glass.svg';
 
 	import { tick } from 'svelte';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase';
+
+	if (browser) {
+		supabase.auth.getUser().then(({ data }) => {
+			if (!data.user) goto('/login');
+		});
+	}
 
 	async function authHeaders(): Promise<Record<string, string>> {
 		const { data } = await supabase.auth.getSession();
@@ -195,10 +209,18 @@
 		{ id: 'british', label: 'Brittisk', description: 'Stiff upper lip, dry humour', icon: iconFlagUk, category: 'playful' },
 		{ id: 'bureaucratic', label: 'Byråkratisk', description: 'Absurt administrativ', icon: iconClipboard, category: 'playful' },
 		{ id: 'tinfoilhat', label: 'Foliehatt', description: 'Underhållande paranoid', icon: iconFlyingSaucer, category: 'playful' },
-		{ id: 'ai-robot', label: 'AI-Robot', description: 'Bokstavlig och lite glitchig', icon: iconRobot, category: 'playful' }
+		{ id: 'ai-robot', label: 'AI-Robot', description: 'Bokstavlig och lite glitchig', icon: iconRobot, category: 'playful' },
+		{ id: 'grandma', label: 'Mormor', description: 'Jordnära och praktiskt vis', icon: iconOldWoman, category: 'serious' },
+		{ id: 'socratic', label: 'Sokratisk', description: 'Nyfiken och frågande', icon: iconClassicalBuilding, category: 'serious' }
 	];
 
-	let selectedVoice = $state('classic');
+	const validVoiceIds = new Set(voices.map((v) => v.id));
+	function getInitialVoice(): string {
+		if (!browser) return 'classic';
+		const param = new URLSearchParams(window.location.search).get('voice');
+		return param && validVoiceIds.has(param) ? param : 'classic';
+	}
+	let selectedVoice = $state(getInitialVoice());
 	let voiceMenuOpen = $state(false);
 	let pendingVoice = $state<string | null>(null);
 
@@ -243,10 +265,10 @@
 	}
 
 	const starters = [
-		'Jag behöver sortera mina tankar',
-		'Jag vill reflektera över ett beslut',
-		'Jag känner mig överväldigad',
-		'Jag vill förstå en känsla bättre'
+		{ text: 'Jag behöver sortera mina tankar', icon: iconBrain },
+		{ text: 'Jag vill reflektera över ett beslut', icon: iconMirror },
+		{ text: 'Jag känner mig överväldigad', icon: iconFaceMelting },
+		{ text: 'Jag vill förstå en känsla bättre', icon: iconMagnifyingGlass }
 	];
 
 	function handleSend() {
@@ -292,8 +314,9 @@
 
 			<div class="starter-grid">
 				{#each starters as starter}
-					<button class="starter-card" onclick={() => handleStarter(starter)}>
-						{starter}
+					<button class="starter-card" onclick={() => handleStarter(starter.text)}>
+						<img class="starter-icon" src={starter.icon} alt="" />
+						{starter.text}
 					</button>
 				{/each}
 			</div>
@@ -438,7 +461,9 @@
 </div>
 
 {#if pendingVoice && pendingVoiceData}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div class="dialog-backdrop" onclick={cancelVoiceSwitch} role="presentation">
+		<!-- svelte-ignore a11y_interactive_supports_focus a11y_click_events_have_key_events -->
 		<div class="dialog" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="voice-switch-title">
 			<div class="dialog-icon">
 				<img src={pendingVoiceData.icon} alt="" width="32" height="32" />
@@ -555,7 +580,7 @@
 	.chat-lead {
 		font-size: var(--text-lg);
 		color: var(--color-text-muted);
-		max-width: 520px;
+		max-width: min(520px, 100%);
 		margin-bottom: var(--space-5);
 		line-height: var(--leading-relaxed);
 	}
@@ -564,11 +589,20 @@
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--space-3);
-		max-width: 560px;
+		max-width: min(680px, 100%);
 		width: 100%;
 	}
 
+	.starter-icon {
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+	}
+
 	.starter-card {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
 		padding: var(--space-4) var(--space-5);
 		font-size: var(--text-sm);
 		font-weight: var(--weight-medium);
@@ -651,7 +685,7 @@
 		position: absolute;
 		bottom: calc(100% + var(--space-2));
 		right: 0;
-		width: 280px;
+		width: min(280px, calc(100vw - var(--space-8)));
 		max-height: 420px;
 		overflow-y: auto;
 		background-color: var(--color-surface-raised);
@@ -974,6 +1008,75 @@
 
 		.chat-bubble {
 			max-width: 90%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.chat-page {
+			padding: var(--space-3);
+			gap: var(--space-6);
+		}
+
+		.chat-greeting {
+			font-size: var(--text-2xl);
+		}
+
+		.chat-lead {
+			font-size: var(--text-base);
+		}
+
+		.starter-card {
+			padding: var(--space-3) var(--space-4);
+		}
+
+		.chat-input-footer {
+			flex-direction: column-reverse;
+			align-items: stretch;
+			gap: var(--space-2);
+		}
+
+		.chat-disclaimer {
+			text-align: center;
+		}
+
+		.wrapup-banner {
+			flex-direction: column;
+			text-align: center;
+		}
+
+		.wrapup-formats {
+			flex-wrap: wrap;
+		}
+	}
+
+	@media (orientation: landscape) and (max-height: 500px) {
+		.chat-page {
+			height: auto;
+			min-height: calc(100dvh - 57px - 97px);
+		}
+
+		.chat-welcome {
+			padding: var(--space-4) 0;
+		}
+
+		.chat-greeting {
+			font-size: var(--text-xl);
+			margin-bottom: var(--space-2);
+		}
+
+		.chat-lead {
+			font-size: var(--text-sm);
+			margin-bottom: var(--space-3);
+		}
+
+		.starter-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: var(--space-2);
+		}
+
+		.starter-card {
+			padding: var(--space-2) var(--space-3);
+			font-size: var(--text-xs);
 		}
 	}
 </style>

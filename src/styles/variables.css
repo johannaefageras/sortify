@@ -95,7 +95,7 @@
   --transition-base: 200ms ease;
 
   /* --- Layout --- */
-  --content-width: 640px;
+  --content-width: 720px;
   --page-width: 960px;
   --page-padding: var(--space-6);
 }

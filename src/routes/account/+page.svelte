@@ -16,6 +16,7 @@
 	let birthMonth = $state('');
 	let birthYear = $state('');
 	let gender = $state('');
+	let location = $state('');
 	let aboutMe = $state('');
 	let profileLoading = $state(false);
 	let profileMessage = $state('');
@@ -31,70 +32,39 @@
 	let accountError = $state('');
 
 	/* --- Session history state --- */
-	// TODO: Replace with real data from Supabase sessions table
-	interface Session {
+	interface SessionItem {
 		id: string;
+		voice: string;
 		title: string;
-		voice: 'gentle' | 'grounded' | 'coach';
-		status: 'completed' | 'abandoned';
-		turnCount: number;
-		startedAt: string;
-		hasTakeaway: boolean;
+		status: string;
+		started_at: string;
+		turn_count: number;
+		has_takeaway: boolean;
 	}
 
-	let sessions = $state<Session[]>([]);
+	let sessions = $state<SessionItem[]>([]);
 	let historyLoading = $state(false);
+	let historyError = $state('');
 
-	// Placeholder data — remove when wiring up real sessions
-	const placeholderSessions: Session[] = [
-		{
-			id: '1',
-			title: 'Stress inför deadline',
-			voice: 'gentle',
-			status: 'completed',
-			turnCount: 8,
-			startedAt: '2026-03-06T21:15:00',
-			hasTakeaway: true
-		},
-		{
-			id: '2',
-			title: 'Relation med en vän',
-			voice: 'grounded',
-			status: 'completed',
-			turnCount: 12,
-			startedAt: '2026-03-04T14:30:00',
-			hasTakeaway: true
-		},
-		{
-			id: '3',
-			title: 'Osäkerhet kring jobb',
-			voice: 'coach',
-			status: 'completed',
-			turnCount: 6,
-			startedAt: '2026-03-01T09:45:00',
-			hasTakeaway: false
-		},
-		{
-			id: '4',
-			title: 'Session utan titel',
-			voice: 'gentle',
-			status: 'abandoned',
-			turnCount: 2,
-			startedAt: '2026-02-27T22:00:00',
-			hasTakeaway: false
-		}
-	];
+	const RECENT_LIMIT = 5;
 
 	const voiceLabels: Record<string, string> = {
-		gentle: 'Mild',
-		grounded: 'Jordad',
-		coach: 'Coach'
-	};
-
-	const voiceEmojis: Record<string, string> = {
-		gentle: '🌿',
-		grounded: '🪨',
-		coach: '⚡'
+		classic: 'Klassisk',
+		friendly: 'Vänlig',
+		friend: 'Kompis',
+		mentor: 'Mentor',
+		lifecoach: 'Livscoach',
+		philosophical: 'Filosofisk',
+		realistic: 'Realistisk',
+		formal: 'Formell',
+		cynical: 'Cynisk',
+		sarcastic: 'Sarkastisk',
+		'passive-aggressive': 'Passivt Aggressiv',
+		chaotic: 'Kaotisk',
+		british: 'Brittisk',
+		bureaucratic: 'Byråkratisk',
+		tinfoilhat: 'Foliehatt',
+		'ai-robot': 'AI-Robot'
 	};
 
 	function formatDate(iso: string): string {
@@ -107,35 +77,39 @@
 		return d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
 	}
 
-	// TODO: Replace with real data fetching
 	async function loadSessions() {
 		historyLoading = true;
-		// const { data, error } = await supabase
-		//   .from('sessions')
-		//   .select('id, title, voice, status, turn_count, started_at, takeaways(id)')
-		//   .eq('user_id', userId)
-		//   .order('started_at', { ascending: false });
-		//
-		// if (data) {
-		//   sessions = data.map(s => ({
-		//     id: s.id,
-		//     title: s.title || 'Session utan titel',
-		//     voice: s.voice,
-		//     status: s.status,
-		//     turnCount: s.turn_count,
-		//     startedAt: s.started_at,
-		//     hasTakeaway: s.takeaways?.length > 0
-		//   }));
-		// }
-		sessions = placeholderSessions;
+		historyError = '';
+
+		const { data: authData } = await supabase.auth.getSession();
+		const token = authData.session?.access_token;
+
+		if (!token) {
+			historyLoading = false;
+			return;
+		}
+
+		try {
+			const res = await fetch('/api/sessions', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!res.ok) throw new Error('Kunde inte ladda sessioner');
+
+			sessions = await res.json();
+		} catch (err: any) {
+			historyError = err.message || 'Något gick fel';
+		}
+
 		historyLoading = false;
 	}
 
 	/* --- Computed stats --- */
+	let recentSessions = $derived(sessions.slice(0, RECENT_LIMIT));
 	let totalSessions = $derived(sessions.length);
 	let completedSessions = $derived(sessions.filter(s => s.status === 'completed').length);
-	let totalTurns = $derived(sessions.reduce((sum, s) => sum + s.turnCount, 0));
-	let favoriteVoice = $derived(() => {
+	let totalTurns = $derived(sessions.reduce((sum, s) => sum + s.turn_count, 0));
+	let favoriteVoice = $derived.by(() => {
 		if (sessions.length === 0) return null;
 		const counts: Record<string, number> = {};
 		for (const s of sessions) {
@@ -186,6 +160,7 @@
 			const meta = data.user.user_metadata ?? {};
 			displayName = meta.display_name ?? '';
 			gender = meta.gender ?? '';
+			location = meta.location ?? '';
 			aboutMe = meta.about_me ?? '';
 			avatarUrl = meta.avatar_url ?? '';
 
@@ -203,7 +178,7 @@
 	}
 
 	/* --- Avatar handling --- */
-	let fileInput: HTMLInputElement;
+	let fileInput: HTMLInputElement = $state() as HTMLInputElement;
 
 	function handleAvatarClick() {
 		fileInput?.click();
@@ -263,6 +238,7 @@
 					display_name: displayName,
 					birthday,
 					gender,
+					location,
 					about_me: aboutMe,
 					avatar_url: newAvatarUrl
 				}
@@ -337,7 +313,7 @@
 				class="tab"
 				class:active={activeTab === 'history'}
 				onclick={() => activeTab = 'history'}
-			>Sessionshistorik</button>
+			>Översikt</button>
 			<button
 				class="tab"
 				class:active={activeTab === 'account'}
@@ -443,6 +419,19 @@
 					</div>
 				</div>
 
+				<!-- Location -->
+				<div class="field">
+					<label class="field-label" for="location">Plats</label>
+					<input
+						class="input"
+						id="location"
+						type="text"
+						placeholder="T.ex. Stockholm, Göteborg..."
+						bind:value={location}
+						autocomplete="address-level2"
+					/>
+				</div>
+
 				<!-- About me -->
 				<div class="field">
 					<label class="field-label" for="aboutMe">Om mig</label>
@@ -464,6 +453,10 @@
 		<!-- Session history tab -->
 		{#if activeTab === 'history'}
 			<div class="tab-content">
+				{#if historyError}
+					<p class="feedback feedback-error">{historyError}</p>
+				{/if}
+
 				<!-- Stats overview -->
 				<div class="stats-row">
 					<div class="stat-card">
@@ -479,9 +472,9 @@
 						<span class="stat-label">Meddelanden</span>
 					</div>
 					<div class="stat-card">
-						{#if favoriteVoice()}
-							<span class="stat-value">{voiceEmojis[favoriteVoice()!]}</span>
-							<span class="stat-label">{voiceLabels[favoriteVoice()!]}</span>
+						{#if favoriteVoice}
+							<span class="stat-value">{voiceLabels[favoriteVoice] ?? favoriteVoice}</span>
+							<span class="stat-label">Favoritröst</span>
 						{:else}
 							<span class="stat-value">—</span>
 							<span class="stat-label">Favoritröst</span>
@@ -489,7 +482,7 @@
 					</div>
 				</div>
 
-				<!-- Session list -->
+				<!-- Recent sessions -->
 				{#if historyLoading}
 					<div class="history-empty">
 						<p class="text-muted">Laddar sessioner...</p>
@@ -501,25 +494,33 @@
 					</div>
 				{:else}
 					<div class="session-list">
-						{#each sessions as session (session.id)}
+						{#each recentSessions as session (session.id)}
 							<a href="/sessions/{session.id}" class="session-card card card-interactive">
 								<div class="session-card-top">
-									<span class="session-voice" title={voiceLabels[session.voice]}>{voiceEmojis[session.voice]}</span>
+									<span class="session-voice-badge">{voiceLabels[session.voice] ?? session.voice}</span>
 									<div class="session-info">
 										<span class="session-title">{session.title}</span>
 										<span class="session-meta">
-											{formatDate(session.startedAt)} · {formatTime(session.startedAt)} · {session.turnCount} meddelanden
+											{formatDate(session.started_at)} · {formatTime(session.started_at)} · {session.turn_count} meddelanden
 										</span>
 									</div>
-									{#if session.status === 'abandoned'}
-										<span class="label label-danger">Avbruten</span>
-									{:else if session.hasTakeaway}
-										<span class="label label-accent">Insikt sparad</span>
-									{/if}
+									<div class="session-badges">
+										{#if session.status === 'abandoned'}
+											<span class="label label-danger">Avbruten</span>
+										{:else if session.status === 'active'}
+											<span class="label">Aktiv</span>
+										{:else if session.has_takeaway}
+											<span class="label label-accent">Insikt sparad</span>
+										{/if}
+									</div>
 								</div>
 							</a>
 						{/each}
 					</div>
+
+					<a href="/library" class="btn btn-secondary view-all-link">
+						Visa alla i biblioteket
+					</a>
 				{/if}
 			</div>
 		{/if}
@@ -893,9 +894,23 @@
 		gap: var(--space-4);
 	}
 
-	.session-voice {
-		font-size: var(--text-xl);
+	.session-voice-badge {
+		font-size: var(--text-xs);
+		font-weight: var(--weight-semibold);
+		padding: var(--space-1) var(--space-3);
+		border-radius: var(--radius-full);
+		background-color: var(--color-surface);
+		color: var(--color-text-muted);
+		white-space: nowrap;
 		flex-shrink: 0;
+	}
+
+	.session-badges {
+		flex-shrink: 0;
+	}
+
+	.view-all-link {
+		align-self: center;
 	}
 
 	.session-info {
@@ -973,6 +988,30 @@
 
 		.session-card-top {
 			gap: var(--space-3);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.account-page {
+			padding: var(--space-6) var(--space-3) var(--space-10);
+		}
+
+		.stat-value {
+			font-size: var(--text-xl);
+		}
+
+		.session-card-top {
+			flex-wrap: wrap;
+		}
+
+		.session-info {
+			min-width: 100%;
+			order: 1;
+		}
+
+		.avatar-circle {
+			width: 96px;
+			height: 96px;
 		}
 	}
 </style>

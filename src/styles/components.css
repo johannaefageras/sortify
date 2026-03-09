@@ -218,3 +218,12 @@ textarea.input {
   white-space: nowrap;
   border-width: 0;
 }
+
+
+/* --- Responsive --- */
+
+@media (max-width: 480px) {
+  .btn {
+    white-space: normal;
+  }
+}

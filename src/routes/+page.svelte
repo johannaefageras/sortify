@@ -1,13 +1,54 @@
+<script lang="ts">
+  import iconScale from '$lib/assets/icons/scale.svg';
+  import iconTeddyBear from '$lib/assets/icons/teddy-bear.svg';
+  import iconBeerMugs from '$lib/assets/icons/beer-mugs.svg';
+  import iconOwl from '$lib/assets/icons/owl.svg';
+  import iconWomanMeditating from '$lib/assets/icons/woman-meditating.svg';
+  import iconFaceThinking from '$lib/assets/icons/face-thinking.svg';
+  import iconCamera from '$lib/assets/icons/camera.svg';
+  import iconTopHat from '$lib/assets/icons/top-hat.svg';
+  import iconFaceUnamused from '$lib/assets/icons/face-unamused.svg';
+  import iconFaceSmirking from '$lib/assets/icons/face-smirking.svg';
+  import iconFaceUpsideDown from '$lib/assets/icons/face-upside-down.svg';
+  import iconTornado from '$lib/assets/icons/tornado.svg';
+  import iconFlagUk from '$lib/assets/icons/flag-uk.svg';
+  import iconClipboard from '$lib/assets/icons/clipboard.svg';
+  import iconFlyingSaucer from '$lib/assets/icons/flying-saucer.svg';
+  import iconRobot from '$lib/assets/icons/robot.svg';
+  import iconOldWoman from '$lib/assets/icons/old-woman.svg';
+  import iconClassicalBuilding from '$lib/assets/icons/classical-building.svg';
+
+  const voices = [
+    { id: 'classic', label: 'Klassisk', desc: 'Balanserad och empatisk', icon: iconScale },
+    { id: 'friendly', label: 'Vänlig', desc: 'Mjuk, varm och tålmodig', icon: iconTeddyBear },
+    { id: 'friend', label: 'Kompis', desc: 'Avslappnad och jordnära', icon: iconBeerMugs },
+    { id: 'mentor', label: 'Mentor', desc: 'Lugn, erfaren och vis', icon: iconOwl },
+    { id: 'lifecoach', label: 'Livscoach', desc: 'Energisk och framåtblickande', icon: iconWomanMeditating },
+    { id: 'philosophical', label: 'Filosofisk', desc: 'Nyfiken och perspektivvidgande', icon: iconFaceThinking },
+    { id: 'realistic', label: 'Realistisk', desc: 'Rak och osentimental', icon: iconCamera },
+    { id: 'formal', label: 'Formell', desc: 'Distinguerad och exakt', icon: iconTopHat },
+    { id: 'grandma', label: 'Mormor', desc: 'Jordnära och praktiskt vis', icon: iconOldWoman },
+    { id: 'socratic', label: 'Sokratisk', desc: 'Nyfiken och frågande', icon: iconClassicalBuilding },
+    { id: 'cynical', label: 'Cynisk', desc: 'Skarp och genomskådande', icon: iconFaceUnamused },
+    { id: 'sarcastic', label: 'Sarkastisk', desc: 'Kvick och lekfullt vass', icon: iconFaceSmirking },
+    { id: 'passive-aggressive', label: 'Passivt Aggressiv', desc: 'Avväpnande artig', icon: iconFaceUpsideDown },
+    { id: 'chaotic', label: 'Kaotisk', desc: 'Oförutsägbar och briljant', icon: iconTornado },
+    { id: 'british', label: 'Brittisk', desc: 'Stiff upper lip, dry humour', icon: iconFlagUk },
+    { id: 'bureaucratic', label: 'Byråkratisk', desc: 'Absurt administrativ', icon: iconClipboard },
+    { id: 'tinfoilhat', label: 'Foliehatt', desc: 'Underhållande paranoid', icon: iconFlyingSaucer },
+    { id: 'ai-robot', label: 'AI-Robot', desc: 'Bokstavlig och lite glitchig', icon: iconRobot },
+  ];
+</script>
+
 <section class="hero">
   <div class="container-narrow hero-inner">
     <h1 class="hero-title">Från tankekaos<br />till klarhet</h1>
     <p class="hero-subtitle">
-      Sortify guidar dig genom en kort reflektion med AI — och ger dig 
+      Sortify guidar dig genom en kort reflektion med AI — och ger dig
       en sammanfattning du faktiskt vill spara.
     </p>
     <div class="hero-actions">
       <a href="/chat" class="btn btn-primary btn-lg">Kom igång</a>
-      <button class="btn btn-ghost btn-lg">Läs mer</button>
     </div>
     <p class="hero-disclaimer">
       Sortify är ett reflektionsverktyg — inte terapi eller krisinsats.
@@ -23,7 +64,7 @@
       <div class="step">
         <span class="step-number">1</span>
         <h3>Välj en röst</h3>
-        <p>Mild, jordad eller coach — du bestämmer tonen för samtalet.</p>
+        <p>Över 18 röster — från empatisk mentor till sarkastisk kompis. Du bestämmer tonen.</p>
       </div>
       <div class="step">
         <span class="step-number">2</span>
@@ -41,30 +82,19 @@
 
 <section class="voices">
   <div class="container">
-    <h2 class="section-title">Tre röster, en process</h2>
+    <h2 class="section-title">Hitta din röst</h2>
+    <p class="section-lead">Seriösa och lekfulla — välj den ton som passar dig just nu.</p>
 
     <div class="voice-grid">
-      <div class="card">
-        <div class="card-inner">
-          <span class="voice-icon">🌿</span>
-          <h3>Mild</h3>
-          <p>Lugn och varm. Lyssnar utan att döma, ställer mjuka frågor och speglar det du säger.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-inner">
-          <span class="voice-icon">🪨</span>
-          <h3>Jordad</h3>
-          <p>Rak och stabil. Hjälper dig hitta kärnan i det du känner utan att linda in det.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-inner">
-          <span class="voice-icon">⚡</span>
-          <h3>Coach</h3>
-          <p>Framåtlutad och energisk. Fokus på vad du kan göra härnäst, inte bara vad du känner.</p>
-        </div>
-      </div>
+      {#each voices as voice}
+        <a href="/chat?voice={voice.id}" class="voice-card">
+          <img class="voice-icon" src={voice.icon} alt="" />
+          <div class="voice-text">
+            <span class="voice-label">{voice.label}</span>
+            <span class="voice-desc">{voice.desc}</span>
+          </div>
+        </a>
+      {/each}
     </div>
   </div>
 </section>
@@ -86,6 +116,10 @@
         <span class="feature-label">Nästa steg</span>
         <p>Konkreta saker du kan göra framåt, baserat på vad du berättat.</p>
       </div>
+      <div class="feature-row">
+        <span class="feature-label">Bibliotek</span>
+        <p>Alla dina sessioner och insikter sparas så du kan gå tillbaka och se mönster över tid.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -96,19 +130,6 @@
     <a href="/chat" class="btn btn-primary btn-lg">Starta din första session</a>
   </div>
 </section>
-
-<footer class="site-footer">
-  <div class="container-narrow">
-    <div class="footer-content">
-      <p>Sortify är inte terapi, rådgivning eller krisinsats.</p>
-      <p>
-        Behöver du prata med någon? 
-        <a href="https://mind.se" target="_blank" rel="noopener">Mind självmordslinjen</a> · 
-        <a href="tel:90101">90101</a>
-      </p>
-    </div>
-  </div>
-</footer>
 
 <style>
   /* --- Hero --- */
@@ -132,7 +153,7 @@
   .hero-subtitle {
     font-size: var(--text-lg);
     color: var(--color-text-muted);
-    max-width: 520px;
+    max-width: min(520px, 100%);
     text-align: center;
   }
 
@@ -198,32 +219,65 @@
 
   .step p {
     color: var(--color-text-muted);
-    max-width: 300px;
+    max-width: min(300px, 100%);
+  }
+
+  .section-lead {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-top: calc(-1 * var(--space-6));
+    margin-bottom: var(--space-10);
   }
 
   /* --- Voices --- */
   .voice-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
 
-  .card-inner {
+  .voice-card {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
   }
 
-  .card-inner h3 {
-    margin-bottom: 0;
+  .voice-card:hover {
+    border-color: var(--color-interactive);
+    box-shadow: inset 0 0 0 1px var(--color-interactive);
+    background-color: var(--accent-subtle);
   }
 
   .voice-icon {
-    font-size: var(--text-2xl);
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 
-  .voices .card p {
+  .voice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .voice-label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-text);
+    line-height: 1.2;
+  }
+
+  .voice-desc {
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
+    line-height: 1.3;
   }
 
   /* --- What you get --- */
@@ -274,32 +328,14 @@
     margin-bottom: 0;
   }
 
-  /* --- Footer --- */
-  .site-footer {
-    padding: var(--space-10) var(--space-6);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .footer-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    text-align: center;
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-  }
-
-  .footer-content a {
-    color: var(--color-interactive);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .footer-content a:hover {
-    color: var(--color-interactive-hover);
-  }
-
   /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .steps-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
   @media (max-width: 768px) {
     .hero {
       padding: var(--space-16) var(--space-4) var(--space-12);
@@ -312,14 +348,63 @@
       padding: var(--space-12) var(--space-4);
     }
 
-    .steps-grid,
-    .voice-grid {
+    .steps-grid {
       grid-template-columns: 1fr;
       gap: var(--space-8);
     }
 
+    .voice-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .section-title {
       margin-bottom: var(--space-8);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding: var(--space-12) var(--space-4) var(--space-10);
+    }
+
+    .features,
+    .voices,
+    .what-you-get,
+    .cta {
+      padding: var(--space-10) var(--space-4);
+    }
+
+    .steps-grid {
+      gap: var(--space-6);
+    }
+
+    .voice-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (orientation: landscape) and (max-height: 500px) {
+    .hero {
+      padding: var(--space-8) var(--space-4) var(--space-6);
+    }
+
+    .hero-inner {
+      gap: var(--space-3);
+    }
+
+    .hero-title {
+      font-size: var(--text-2xl);
+    }
+
+    .hero-subtitle {
+      font-size: var(--text-base);
+    }
+
+    .features,
+    .voices,
+    .what-you-get,
+    .cta {
+      padding: var(--space-8) var(--space-4);
     }
   }
 </style>

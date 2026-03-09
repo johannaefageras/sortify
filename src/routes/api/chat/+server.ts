@@ -1,5 +1,5 @@
 import { ANTHROPIC_API_KEY } from '$env/static/private';
-import { buildSystemPrompt, getStageForTurn } from '$lib/prompt';
+import { buildSystemPrompt, getStageForTurn, type UserProfile } from '$lib/prompt';
 import { getUser } from '$lib/server/auth';
 import { detectCrisis, getCrisisResponse } from '$lib/server/safety';
 import { supabaseAdmin } from '$lib/server/supabase';
@@ -146,12 +146,31 @@ export const POST: RequestHandler = async ({ request }) => {
 			.update({ turn_count: turnCount, stage })
 			.eq('id', currentSessionId);
 
+		// --- Build user profile from metadata ---
+		let userProfile: UserProfile | undefined;
+		if (user) {
+			const meta = user.user_metadata ?? {};
+			const profile: UserProfile = {};
+			if (meta.display_name) profile.displayName = meta.display_name;
+			if (meta.birthday) {
+				const birthYear = parseInt(meta.birthday.split('-')[0], 10);
+				if (birthYear) {
+					profile.age = new Date().getFullYear() - birthYear;
+				}
+			}
+			if (meta.gender) profile.gender = meta.gender;
+			if (meta.location) profile.location = meta.location;
+			if (meta.about_me) profile.aboutMe = meta.about_me;
+			if (Object.keys(profile).length > 0) userProfile = profile;
+		}
+
 		// --- Build system prompt ---
 		const systemPrompt = buildSystemPrompt({
 			voice,
 			stage,
 			turnCount,
-			wrapUpEligible: turnCount >= 14
+			wrapUpEligible: turnCount >= 14,
+			userProfile
 		});
 
 		const anthropicMessages = dbMessages.map((msg) => ({

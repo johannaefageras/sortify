@@ -42,8 +42,14 @@
 		}
 	});
 
+	let menuOpen = $state(false);
+
 	function toggleTheme() {
 		dark = !dark;
+	}
+
+	function closeMenu() {
+		menuOpen = false;
 	}
 </script>
 
@@ -55,9 +61,12 @@
 <nav class="navbar">
 	<div class="navbar-inner">
 		<a href="/" class="navbar-brand">Sortify</a>
-		<div class="navbar-actions">
+
+		<!-- Desktop nav -->
+		<div class="navbar-actions navbar-desktop">
 			<a href="/chat" class="btn btn-ghost">Ny chatt</a>
 			{#if user}
+				<a href="/library" class="btn btn-ghost">Bibliotek</a>
 				<a href="/account" class="btn btn-ghost">Mitt konto</a>
 				<button class="btn btn-ghost" onclick={handleLogout}>Logga ut</button>
 			{:else}
@@ -88,7 +97,68 @@
 				{/if}
 			</button>
 		</div>
+
+		<!-- Mobile controls -->
+		<div class="navbar-mobile-controls">
+			<button
+				class="theme-toggle"
+				onclick={toggleTheme}
+				aria-label={dark ? 'Byt till ljust läge' : 'Byt till mörkt läge'}
+			>
+				{#if dark}
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="5"/>
+						<line x1="12" y1="1" x2="12" y2="3"/>
+						<line x1="12" y1="21" x2="12" y2="23"/>
+						<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+						<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+						<line x1="1" y1="12" x2="3" y2="12"/>
+						<line x1="21" y1="12" x2="23" y2="12"/>
+						<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+						<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+					</svg>
+				{:else}
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+					</svg>
+				{/if}
+			</button>
+			<button
+				class="hamburger"
+				onclick={() => menuOpen = !menuOpen}
+				aria-label={menuOpen ? 'Stäng meny' : 'Öppna meny'}
+				aria-expanded={menuOpen}
+			>
+				{#if menuOpen}
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				{:else}
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="3" y1="12" x2="21" y2="12"/>
+						<line x1="3" y1="6" x2="21" y2="6"/>
+						<line x1="3" y1="18" x2="21" y2="18"/>
+					</svg>
+				{/if}
+			</button>
+		</div>
 	</div>
+
+	<!-- Mobile dropdown menu -->
+	{#if menuOpen}
+		<div class="mobile-menu">
+			<a href="/chat" class="mobile-menu-link" onclick={closeMenu}>Ny chatt</a>
+			{#if user}
+				<a href="/library" class="mobile-menu-link" onclick={closeMenu}>Bibliotek</a>
+				<a href="/account" class="mobile-menu-link" onclick={closeMenu}>Mitt konto</a>
+				<button class="mobile-menu-link" onclick={() => { closeMenu(); handleLogout(); }}>Logga ut</button>
+			{:else}
+				<a href="/login" class="mobile-menu-link" onclick={closeMenu}>Logga in</a>
+				<a href="/signup" class="mobile-menu-link mobile-menu-cta" onclick={closeMenu}>Kom igång</a>
+			{/if}
+		</div>
+	{/if}
 </nav>
 
 <main>
@@ -138,14 +208,70 @@
 		letter-spacing: -0.02em;
 	}
 
-	.navbar-actions {
+	.navbar-desktop {
 		display: flex;
 		align-items: center;
 		gap: var(--space-3);
 	}
 
-	.navbar-actions .btn {
+	.navbar-desktop .btn {
 		padding-inline: var(--space-4);
+	}
+
+	.navbar-mobile-controls {
+		display: none;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.hamburger {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		background: transparent;
+		border: none;
+		color: var(--color-text-muted);
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		transition: background-color var(--transition-fast), color var(--transition-fast);
+	}
+
+	.hamburger:hover {
+		background-color: var(--color-surface);
+		color: var(--color-text);
+	}
+
+	.mobile-menu {
+		display: none;
+		flex-direction: column;
+		padding: var(--space-2) var(--space-4) var(--space-4);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.mobile-menu-link {
+		display: block;
+		padding: var(--space-3) var(--space-4);
+		font-size: var(--text-base);
+		font-weight: var(--weight-medium);
+		color: var(--color-text);
+		border-radius: var(--radius-md);
+		background: transparent;
+		border: none;
+		text-align: left;
+		width: 100%;
+		cursor: pointer;
+		transition: background-color var(--transition-fast);
+	}
+
+	.mobile-menu-link:hover {
+		background-color: var(--color-surface);
+	}
+
+	.mobile-menu-cta {
+		color: var(--color-interactive);
+		font-weight: var(--weight-semibold);
 	}
 
 	.theme-toggle {
@@ -207,6 +333,18 @@
 			padding: var(--space-3) var(--space-4);
 		}
 
+		.navbar-desktop {
+			display: none;
+		}
+
+		.navbar-mobile-controls {
+			display: flex;
+		}
+
+		.mobile-menu {
+			display: flex;
+		}
+
 		.site-footer {
 			padding: var(--space-6) var(--space-4);
 		}
@@ -214,6 +352,31 @@
 		.footer-nav {
 			gap: var(--space-4);
 			flex-wrap: wrap;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.footer-nav {
+			justify-content: center;
+			gap: var(--space-3);
+		}
+
+		.footer-copyright {
+			font-size: var(--text-xs);
+		}
+	}
+
+	@media (orientation: landscape) and (max-height: 500px) {
+		.navbar-inner {
+			padding: var(--space-2) var(--space-4);
+		}
+
+		.site-footer {
+			padding: var(--space-3) var(--space-4);
+		}
+
+		.footer-inner {
+			gap: var(--space-2);
 		}
 	}
 </style>
