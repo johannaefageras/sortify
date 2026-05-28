@@ -8,13 +8,15 @@ Appen låter en användare lämna över något som tynger dem — stort eller sm
 
 Varje röst beskrivs i `rosterna.md` med tre uppgifter du måste utgå från:
 
-- **Slag** — Stil, Karaktär eller Format-grepp.
+- **Slag** — Stil, Karaktär eller Format.
 - **Beskrivning** — röstens kärna, ton och signatur. Det här är din källa för personligheten.
 - **Vikt** — hur tung fråga rösten klarar (se Vikt-kalibrering nedan). Den styr säkerhetsbeteendet.
 
 Din uppgift: omvandla en sådan beskrivning till en fullständig systemprompt enligt mallen nedan.
 
-Varje röst-prompt läggs i koden **efter** bas-systemprompten (`basprompt.md`). Basen bär allt gemensamt — sammanhang, uppdrag, grundregler, krisresurs-regeln och den fullständiga säkerhetsspärren. Du ska därför **inte** upprepa säkerhetsblocket i röst-prompten; du anger bara röstens egen tröskel (se sektion 8). Skriv röst-prompten som om basen redan står ovanför den.
+Varje röst-prompt läggs i koden **efter** bas-systemprompten (`basprompt.md`) och det aktiva läget — komposition: **bas + läge + röst**. Basen bär allt gemensamt — sammanhang, uppdrag, grundregler, läges-mekaniken, krisresurs-regeln och den fullständiga säkerhetsspärren — och de tre läges-direktiven bor i `lagena.md`. Du ska därför **inte** upprepa säkerhetsblocket i röst-prompten; du anger bara röstens egen tröskel (se sektion 8). Skriv röst-prompten som om basen och det aktiva läget redan står ovanför den.
+
+**Lägena hanteras av läges-lagret, inte av rösten.** Personen väljer ett av tre lägen — _Ventilera_ (bli sedd, inte fixad), _Sortera_ (reda ut härvan) eller _Formulera_ (hitta orden), definierade i `lagena.md` — och det aktiva lägets direktiv förskjuter vad rösten siktar mot. Skriv **aldrig** per-läge-varianter i röst-prompten och skriv inte ut hur rösten låter i respektive läge. Rösten behåller sin ton, sitt språk och sitt grepp oförändrat; den applicerar bara sin personlighet på det mål det aktiva läget anger. Sektion 5 ska beskriva röstens grepp läges-oberoende.
 
 ## Övergripande regler
 

@@ -32,9 +32,11 @@ Sortifys tre lägen mappar mot vad du behöver, inte vad du gör:
 - **Sortera** — när du vill reda ut härvan
 - **Formulera** — när du behöver ord för det
 
+Läget är inte en egen röst utan ett lager ovanpå den valda. Det förskjuter _vad_ rösten siktar mot — möta, reda ut eller hitta ord — men aldrig dess ton eller grepp. Samma mormor i Ventilera håller om dig; i Sortera hjälper hon dig reda ut härvan, fortfarande som mormor. Tekniskt vävs läget in i kompositionen **bas + läge + röst**: läges-direktiven bor i `lagena.md` och mekaniken i `basprompt.md`, så varje röst anpassar sig efter läget utan att behöva specas tre gånger.
+
 ## Rösterna
 
-Ensemblen finns specad i `rosterna.md`. Tre slag — **Stilar** (en ton, inget vem), **Karaktärer** (ett vem med personlighet) och **Format-grepp** (greppet är hela rösten). Varje röst är dessutom vikttaggad efter hur tung en fråga den klarar, vilket är det som driver säkerhetsväxlingen nedan.
+Ensemblen finns specad i `rosterna.md`. Tre slag — **Stilar** (en ton, inget vem), **Karaktärer** (ett vem med personlighet) och **Format** (greppet är hela rösten). Varje röst är dessutom vikttaggad efter hur tung en fråga den klarar, vilket är det som driver säkerhetsväxlingen nedan.
 
 ## Tonen
 
